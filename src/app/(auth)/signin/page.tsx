@@ -33,8 +33,8 @@ export default function SignIn() {
 		const { success, error } = await signIn(email, password);
 
 		if (success) {
-			console.log("success");
 			await refreshUser();
+			window.location.href = "/business-dashboard";
 		} else if (error) {
 			setError(error);
 		}

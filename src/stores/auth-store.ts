@@ -1,10 +1,6 @@
 import { create } from "zustand";
-import { useRouter } from "next/navigation";
-import {
-	getCurrentProfile,
-	supabase,
-	type Profile,
-} from "../utils/supabase/client";
+import getCurrentProfile, { supabase } from "../utils/supabase/client";
+import type { Profile } from "../types/database.types";
 
 type AuthStore = {
 	user: Profile | null;

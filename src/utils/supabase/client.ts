@@ -1,4 +1,4 @@
-import type { Database } from "@/src/types/database.types";
+import type { Database, Profile } from "@/src/types/database.types";
 import { createBrowserClient } from "@supabase/ssr";
 
 export const createClient = () =>
@@ -11,21 +11,9 @@ export const createClient = () =>
 
 export const supabase = createClient();
 
-export type UserRole = "admin" | "business_owner" | "customer";
+const client = createClient();
 
-export type Profile = {
-	id: string;
-	email: string;
-	full_name: string | null;
-	phone: string | null;
-	address: string | null;
-	role: UserRole;
-	created_at: string;
-	updated_at: string;
-};
-
-export async function getCurrentProfile(): Promise<Profile | null> {
-	const client = createClient();
+export default async function getCurrentProfile(): Promise<Profile | null> {
 	try {
 		const {
 			data: { user },
@@ -49,7 +37,6 @@ export async function getCurrentProfile(): Promise<Profile | null> {
 export async function updateProfile(
 	profile: Partial<Profile>,
 ): Promise<{ success: boolean; error?: string }> {
-	const client = createClient();
 	try {
 		const {
 			data: { user },
@@ -75,9 +62,8 @@ export async function updateProfile(
 export async function signUp(
 	email: string,
 	password: string,
-	role: UserRole = "customer",
+	role: Profile["role"] = "customer",
 ): Promise<{ success: boolean; error?: string }> {
-	const client = createClient();
 	try {
 		const { data, error } = await client.auth.signUp({
 			email,
@@ -102,7 +88,6 @@ export async function signIn(
 	email: string,
 	password: string,
 ): Promise<{ success: boolean; error?: string }> {
-	const client = createClient();
 	try {
 		const { error } = await client.auth.signInWithPassword({
 			email,
@@ -120,7 +105,6 @@ export async function signIn(
 }
 
 export async function signOut(): Promise<{ success: boolean; error?: string }> {
-	const client = createClient();
 	try {
 		const { error } = await client.auth.signOut();
 
