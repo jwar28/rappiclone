@@ -4,6 +4,7 @@ import type * as React from "react";
 import {
 	BadgeDollarSign,
 	ChartNoAxesColumnIncreasing,
+	PlusCircleIcon,
 	Store,
 } from "lucide-react";
 import {
@@ -48,13 +49,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						>
 							<a href="/">
 								<ChartNoAxesColumnIncreasing className="h-5 w-5" />
-								<span className="text-base font-semibold">Rappiclone</span>
+								<span className="text-xl font-semibold">Rappiclone</span>
 							</a>
+						</SidebarMenuButton>
+						<SidebarMenuButton
+							tooltip="Crear"
+							className="min-w-8 mt-6 bg-primary text-primary-foreground duration-200 ease-linear hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground"
+						>
+							<PlusCircleIcon />
+							<span>Crear</span>
 						</SidebarMenuButton>
 					</SidebarMenuItem>
 				</SidebarMenu>
 			</SidebarHeader>
-			<SidebarContent>
+			<SidebarContent className="space-y-2">
 				<NavMain items={data.navMain} />
 			</SidebarContent>
 			<SidebarFooter>
