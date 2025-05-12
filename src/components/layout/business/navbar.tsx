@@ -48,7 +48,7 @@ export const Navbar = () => {
 					<DropdownMenuTrigger asChild>
 						<Button className="flex justify-start bg-primary text-primary-foreground duration-200 ease-linear hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground">
 							<PlusCircleIcon className="mr-2 h-4 w-4" />
-							<span>Crear</span>
+							<span>Añadir</span>
 						</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent side="bottom" align="center">
