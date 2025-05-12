@@ -38,3 +38,17 @@ export const getBusinessesByOwnerId = async (
 
 	return data as Business[];
 };
+
+export const getBusinessByName = async (name: string): Promise<Business> => {
+	const { data, error } = await supabase
+		.from("businesses")
+		.select("*")
+		.eq("name", name)
+		.single();
+
+	if (error) {
+		throw new Error(error.message);
+	}
+
+	return data as Business;
+};

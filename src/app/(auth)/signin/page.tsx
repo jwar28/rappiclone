@@ -1,5 +1,6 @@
 "use client";
 
+import { loadBusinessOwnerData } from "@/src/api/load-business-owner-data";
 import { Alert, AlertDescription } from "@/src/components/ui/alert";
 import { Button } from "@/src/components/ui/button";
 import {
@@ -23,7 +24,7 @@ export default function SignIn() {
 	const [password, setPassword] = useState("");
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState("");
-	const { refreshUser } = useAuthStore();
+	const { refreshUser, user } = useAuthStore();
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -34,7 +35,7 @@ export default function SignIn() {
 
 		if (success) {
 			await refreshUser();
-			window.location.href = "/business-dashboard";
+			window.location.href = "/";
 		} else if (error) {
 			setError(error);
 		}
@@ -48,9 +49,7 @@ export default function SignIn() {
 				<div className="flex min-h-screen flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
 					<Card className="w-full max-w-md">
 						<CardHeader className="space-y-1">
-							<CardTitle className="text-2xl font-bold text-center">
-								Iniciar sesión
-							</CardTitle>
+							<CardTitle className="text-2xl font-bold text-center">Iniciar sesión</CardTitle>
 							<CardDescription className="text-center">
 								Ingresa tus credenciales para acceder
 							</CardDescription>
@@ -95,10 +94,7 @@ export default function SignIn() {
 
 								<div className="text-center text-sm">
 									¿No tienes una cuenta?{" "}
-									<Link
-										href="/signup"
-										className="font-medium text-primary hover:underline"
-									>
+									<Link href="/signup" className="font-medium text-primary hover:underline">
 										Regístrate
 									</Link>
 								</div>

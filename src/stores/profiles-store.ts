@@ -1,78 +1,24 @@
-// stores/profile-store.ts
+// stores/profilesStore.ts
 import { create } from "zustand";
-import type { Profile } from "../types/database.types";
-import {
-	fetchProfilesByIdsHelper,
-	getProfile,
-	getProfileByUserId,
-} from "../api/profiles";
+import type { Profile } from "@/src/types/database.types";
 
-interface ProfileStore {
-	profiles: Record<string, Profile>;
+interface ProfilesStore {
+	profiles: Profile[];
 	loading: boolean;
 	error: string | null;
-	fetchAllProfiles: () => Promise<void>;
-	fetchProfileByUserId: (userId: string) => Promise<void>;
-	fetchProfilesByIds: (userIds: string[]) => Promise<void>;
+	setProfiles: (profiles: Profile[]) => void;
+	setLoading: (loading: boolean) => void;
+	setError: (error: string | null) => void;
+	clearProfiles: () => void;
 }
 
-export const useProfileStore = create<ProfileStore>((set, get) => ({
-	profiles: {},
+export const useProfilesStore = create<ProfilesStore>((set) => ({
+	profiles: [],
 	loading: false,
 	error: null,
 
-	fetchAllProfiles: async () => {
-		set({ loading: true, error: null });
-		try {
-			const data = await getProfile();
-			set({
-				profiles: data.reduce(
-					(acc, profile) => {
-						acc[profile.id] = profile;
-						return acc;
-					},
-					{} as Record<string, Profile>,
-				),
-				loading: false,
-			});
-			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-		} catch (error: any) {
-			set({ error: error.message, loading: false });
-		}
-	},
-
-	fetchProfileByUserId: async (userId: string) => {
-		set({ loading: true, error: null });
-		try {
-			const data = await getProfileByUserId(userId);
-			set({
-				profiles: { [data[0].id]: data[0] },
-				loading: false,
-			});
-			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-		} catch (error: any) {
-			set({ error: error.message, loading: false });
-		}
-	},
-
-	fetchProfilesByIds: async (userIds: string[]) => {
-		const uniqueIds = Array.from(new Set(userIds));
-		const existing = get().profiles;
-		const missingIds = uniqueIds.filter((id) => !existing[id]);
-
-		if (missingIds.length === 0) return;
-
-		set({ loading: true, error: null });
-
-		try {
-			const newProfiles = await fetchProfilesByIdsHelper(missingIds);
-			set({
-				profiles: { ...existing, ...newProfiles },
-				loading: false,
-			});
-			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-		} catch (err: any) {
-			set({ error: err.message, loading: false });
-		}
-	},
+	setProfiles: (profiles) => set({ profiles }),
+	setLoading: (loading) => set({ loading }),
+	setError: (error) => set({ error }),
+	clearProfiles: () => set({ profiles: [], error: null }),
 }));

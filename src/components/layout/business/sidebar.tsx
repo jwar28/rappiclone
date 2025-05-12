@@ -19,6 +19,14 @@ import {
 import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
 import { useAuthStore } from "@/src/stores/auth-store";
+import { Button } from "../../ui/button";
+import {
+	DropdownMenu,
+	DropdownMenuTrigger,
+	DropdownMenuContent,
+	DropdownMenuItem,
+} from "../../ui/dropdown-menu";
+import Link from "next/link";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const { user } = useAuthStore();
@@ -26,8 +34,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const data = {
 		navMain: [
 			{
-				title: "Negocios",
-				url: "#",
+				title: "Tiendas",
+				url: "/stores",
 				icon: Store,
 			},
 			{
@@ -47,18 +55,30 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							asChild
 							className="data-[slot=sidebar-menu-button]:!p-1.5"
 						>
-							<a href="/">
+							<Link href="/business-dashboard">
 								<ChartNoAxesColumnIncreasing className="h-5 w-5" />
 								<span className="text-xl font-semibold">Rappiclone</span>
-							</a>
+							</Link>
 						</SidebarMenuButton>
-						<SidebarMenuButton
-							tooltip="Crear"
-							className="min-w-8 mt-6 bg-primary text-primary-foreground duration-200 ease-linear hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground"
-						>
-							<PlusCircleIcon />
-							<span>Crear</span>
-						</SidebarMenuButton>
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<Button className="flex justify-start w-full mt-5 bg-primary text-primary-foreground duration-200 ease-linear hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground">
+									<PlusCircleIcon className="mr-2 h-4 w-4" />
+									<span>Crear</span>
+								</Button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent side="right" align="start">
+								<DropdownMenuItem onClick={() => console.log("Crear producto")}>
+									Producto
+								</DropdownMenuItem>
+								<DropdownMenuItem onClick={() => console.log("Crear negocio")}>
+									Negocio
+								</DropdownMenuItem>
+								<DropdownMenuItem onClick={() => console.log("Crear orden")}>
+									Orden
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
 					</SidebarMenuItem>
 				</SidebarMenu>
 			</SidebarHeader>
