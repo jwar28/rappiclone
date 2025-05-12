@@ -8,10 +8,14 @@ import { Button } from "@/src/components/ui/button";
 import { Pencil, Trash2, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { AddBusinessSheet } from "@/src/components/business/AddBusinessSheet";
+import { getBusinessesByOwnerId } from "@/src/api/business";
+import { useAuthStore } from "@/src/stores/auth-store";
 
 export default function StoresPage() {
 	const router = useRouter();
-	const { businesses, loading, error } = useBusinessStore();
+	const { businesses, loading, error, setBusinesses } = useBusinessStore();
+	const { user } = useAuthStore();
 
 	const categoriesDict = {
 		restaurant: "Restaurante",
@@ -40,9 +44,19 @@ export default function StoresPage() {
 			<div className="flex flex-col gap-4">
 				<div className="flex items-center justify-between mb-4">
 					<h1 className="text-2xl font-bold">Mis Comercios</h1>
-					<Button onClick={handleCreate} className="flex gap-2 items-center">
-						<Plus className="w-4 h-4" /> Crear nuevo comercio
-					</Button>
+					<AddBusinessSheet
+						trigger={
+							<Button className="flex gap-2 items-center">
+								<Plus className="w-4 h-4" /> Crear nuevo comercio
+							</Button>
+						}
+						onBusinessCreated={async () => {
+							if (user?.id) {
+								const negocios = await getBusinessesByOwnerId(user.id);
+								setBusinesses(negocios);
+							}
+						}}
+					/>
 				</div>
 
 				{loading && businesses?.length === 0 && <Skeleton className="h-40 w-full" />}

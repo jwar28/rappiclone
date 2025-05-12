@@ -1,7 +1,7 @@
 import { Button } from "../../ui/button";
 import { Tabs } from "../../ui/tabs";
 import { useRouter, usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useState } from "react";
 import { NavUser } from "./nav-user";
 import { useAuthStore } from "@/src/stores/auth-store";
 import {
@@ -11,11 +11,16 @@ import {
 	DropdownMenuTrigger,
 } from "../../ui/dropdown-menu";
 import { PlusCircleIcon } from "lucide-react";
+import { AddBusinessSheet } from "@/src/components/business/AddBusinessSheet";
+import { getBusinessesByOwnerId } from "@/src/api/business";
+import { useBusinessStore } from "@/src/stores/business-store";
 
 export const Navbar = () => {
 	const router = useRouter();
 	const pathname = usePathname();
 	const { user } = useAuthStore();
+	const [openSheet, setOpenSheet] = useState(false);
+	const { setBusinesses } = useBusinessStore();
 
 	const tabs = [
 		{
@@ -55,12 +60,21 @@ export const Navbar = () => {
 						<DropdownMenuItem onClick={() => console.log("Crear producto")}>
 							Producto
 						</DropdownMenuItem>
-						<DropdownMenuItem onClick={() => console.log("Crear negocio")}>
-							Negocio
-						</DropdownMenuItem>
+						<DropdownMenuItem onClick={() => setOpenSheet(true)}>Negocio</DropdownMenuItem>
 						<DropdownMenuItem onClick={() => console.log("Crear orden")}>Orden</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>
+
+				<AddBusinessSheet
+					open={openSheet}
+					onOpenChange={setOpenSheet}
+					onBusinessCreated={async () => {
+						if (user?.id) {
+							const negocios = await getBusinessesByOwnerId(user.id);
+							setBusinesses(negocios);
+						}
+					}}
+				/>
 
 				<NavUser
 					user={{
