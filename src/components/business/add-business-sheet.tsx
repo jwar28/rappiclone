@@ -13,6 +13,7 @@ import { addBusiness } from "@/src/api/business";
 import { useAuthStore } from "@/src/stores/auth-store";
 import type { InsertBusiness } from "@/src/types/database.types";
 import { Textarea } from "../ui/textarea";
+import { toast } from "sonner";
 
 const CATEGORIES = [
 	{ value: "restaurant", label: "Restaurante" },
@@ -66,6 +67,7 @@ export function AddBusinessSheet({
 				owner_id: user.id,
 			};
 			await addBusiness(business);
+			toast.success("Negocio creado exitosamente");
 			if (onBusinessCreated) onBusinessCreated();
 			setOpen(false);
 			setForm({
@@ -76,7 +78,7 @@ export function AddBusinessSheet({
 				logo_url: "",
 			});
 		} catch (err) {
-			setError(err instanceof Error ? err.message : "Error al crear el negocio");
+			toast.error(err instanceof Error ? err.message : "Error al crear el negocio");
 		} finally {
 			setLoading(false);
 		}

@@ -11,8 +11,21 @@ import type { ColumnDef } from "@tanstack/react-table";
 import FadeContent from "@/src/components/ui/fade-content";
 import { Card, CardContent } from "@/src/components/ui/card";
 import { TrendingUp, Package, DollarSign, ShoppingCart } from "lucide-react";
-import { getProductsByBusinessId } from "@/src/api/products";
-import { AddProductSheet } from "@/src/components/products/AddProductSheet";
+import { getProductsByBusinessId, deleteProduct } from "@/src/api/products";
+import { AddProductSheet } from "@/src/components/products/add-product-sheet";
+import { EditProductSheet } from "@/src/components/products/edit-product-sheet";
+import { toast } from "sonner";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@/src/components/ui/alert-dialog";
+import { useState } from "react";
 
 export default function StorePage() {
 	const pathname = usePathname();
@@ -21,13 +34,29 @@ export default function StorePage() {
 	const { products, setProducts } = useProductStore();
 	const { orders } = useOrderStore();
 	const { profiles } = useProfilesStore();
+	const [productToDelete, setProductToDelete] = useState<string | null>(null);
+	const [productToEdit, setProductToEdit] = useState<string | null>(null);
 
-	const handleEdit = (productId: string) => {
-		console.log("Edit product:", productId);
+	const refreshProducts = async () => {
+		if (!storeId) return;
+		const products = await getProductsByBusinessId(storeId);
+		setProducts(products);
 	};
 
-	const handleDelete = (productId: string) => {
-		// Implement delete logic
+	const handleEdit = (productId: string) => {
+		setProductToEdit(productId);
+	};
+
+	const handleDelete = async (productId: string) => {
+		try {
+			await deleteProduct(productId);
+			toast.success("Producto eliminado exitosamente");
+			await refreshProducts();
+		} catch (error) {
+			toast.error("Error al eliminar el producto");
+		} finally {
+			setProductToDelete(null);
+		}
 	};
 
 	const filteredProducts = products.filter((product) => product.business_id === storeId);
@@ -53,7 +82,7 @@ export default function StorePage() {
 					<Button variant="outline" className="mr-2" onClick={() => handleEdit(row.original.id)}>
 						Editar
 					</Button>
-					<Button variant="destructive" onClick={() => handleDelete(row.original.id)}>
+					<Button variant="destructive" onClick={() => setProductToDelete(row.original.id)}>
 						Eliminar
 					</Button>
 				</div>
@@ -91,11 +120,7 @@ export default function StorePage() {
 	const totalOrders = filteredOrders.length;
 	const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
 
-	const refreshProducts = async () => {
-		if (!storeId) return;
-		const products = await getProductsByBusinessId(storeId);
-		setProducts(products);
-	};
+	const productToEditData = productToEdit ? products.find((p) => p.id === productToEdit) : null;
 
 	return (
 		<FadeContent easing="ease-in-out" duration={500}>
@@ -176,6 +201,32 @@ export default function StorePage() {
 						<DataTable columns={orderColumns} data={filteredOrders} initialPageSize={5} />
 					</div>
 				</div>
+
+				<AlertDialog open={!!productToDelete} onOpenChange={() => setProductToDelete(null)}>
+					<AlertDialogContent>
+						<AlertDialogHeader>
+							<AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+							<AlertDialogDescription>
+								Esta acción no se puede deshacer. Esto eliminará permanentemente el producto.
+							</AlertDialogDescription>
+						</AlertDialogHeader>
+						<AlertDialogFooter>
+							<AlertDialogCancel>Cancelar</AlertDialogCancel>
+							<AlertDialogAction onClick={() => productToDelete && handleDelete(productToDelete)}>
+								Eliminar
+							</AlertDialogAction>
+						</AlertDialogFooter>
+					</AlertDialogContent>
+				</AlertDialog>
+
+				{productToEditData && (
+					<EditProductSheet
+						product={productToEditData}
+						open={!!productToEdit}
+						onOpenChange={(open) => !open && setProductToEdit(null)}
+						onProductUpdated={refreshProducts}
+					/>
+				)}
 			</div>
 		</FadeContent>
 	);

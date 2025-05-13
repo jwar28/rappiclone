@@ -2,7 +2,7 @@
 
 import { AuthRedirectGuard } from "@/src/components/auth/auth-redirect-guard";
 import { RouteGuard } from "@/src/components/auth/route-guard";
-import { Navbar } from "@/src/components/layout/business/navbar";
+import { Navbar } from "@/src/components/business/navbar";
 import FadeContent from "@/src/components/ui/fade-content";
 import { Toaster } from "@/src/components/ui/sonner";
 

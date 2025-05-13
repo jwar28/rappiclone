@@ -1,6 +1,5 @@
 import { supabase } from "../utils/supabase/client";
 import type { InsertProduct, Product } from "../types/database.types";
-import { useProductStore } from "../stores/product-store";
 
 export const getProducts = async (): Promise<Product[]> => {
 	const { data, error } = await supabase.from("products").select("*");
@@ -28,6 +27,25 @@ export const getProductsByBusinessName = async (businessName: string): Promise<P
 
 export const addProduct = async (product: InsertProduct): Promise<Product> => {
 	const { data, error } = await supabase.from("products").insert(product).select().single();
+	if (error) throw error;
+	return data as Product;
+};
+
+export const deleteProduct = async (productId: string): Promise<void> => {
+	const { error } = await supabase.from("products").delete().eq("id", productId);
+	if (error) throw error;
+};
+
+export const updateProduct = async (
+	productId: string,
+	product: InsertProduct,
+): Promise<Product> => {
+	const { data, error } = await supabase
+		.from("products")
+		.update(product)
+		.eq("id", productId)
+		.select()
+		.single();
 	if (error) throw error;
 	return data as Product;
 };

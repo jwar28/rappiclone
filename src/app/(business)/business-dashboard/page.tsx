@@ -1,7 +1,7 @@
 "use client";
 
 import FadeContent from "@/src/components/ui/fade-content";
-import { BusinessCard } from "@/src/components/shared/BusinessCard";
+import { BusinessCard } from "@/src/components/business/business-card";
 import { useBusinessStore } from "@/src/stores/business-store";
 import { useOrderStore } from "@/src/stores/orders-store";
 import {

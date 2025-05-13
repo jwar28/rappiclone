@@ -47,6 +47,7 @@ export function AddProductSheet({
 	const setOpen = controlledOnOpenChange || setInternalOpen;
 	const [name, setName] = useState("");
 	const [price, setPrice] = useState("");
+	const [imageUrl, setImageUrl] = useState("");
 	const [businessId, setBusinessId] = useState(selectedBusinessId || "");
 	const [loading, setLoading] = useState(false);
 
@@ -62,11 +63,13 @@ export function AddProductSheet({
 				name,
 				price: Number.parseFloat(price),
 				business_id: selectedBusinessId || businessId,
+				image_url: imageUrl || null,
 			});
 			toast.success("Producto creado exitosamente");
 			setOpen(false);
 			setName("");
 			setPrice("");
+			setImageUrl("");
 			if (onProductCreated) onProductCreated();
 		} catch (err) {
 			toast.error("Error al crear el producto");
@@ -101,6 +104,16 @@ export function AddProductSheet({
 							value={price}
 							onChange={(e) => setPrice(e.target.value)}
 							required
+							disabled={loading}
+						/>
+					</div>
+					<div>
+						<Label>URL de la imagen (opcional)</Label>
+						<Input
+							type="url"
+							value={imageUrl}
+							onChange={(e) => setImageUrl(e.target.value)}
+							placeholder="https://ejemplo.com/imagen.jpg"
 							disabled={loading}
 						/>
 					</div>

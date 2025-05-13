@@ -8,7 +8,7 @@ import { Button } from "@/src/components/ui/button";
 import { Pencil, Trash2, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { AddBusinessSheet } from "@/src/components/business/AddBusinessSheet";
+import { AddBusinessSheet } from "@/src/components/business/add-business-sheet";
 import { getBusinessesByOwnerId, deleteBusiness } from "@/src/api/business";
 import { useAuthStore } from "@/src/stores/auth-store";
 import {
@@ -22,7 +22,6 @@ import {
 	AlertDialogTitle,
 	AlertDialogTrigger,
 } from "@/src/components/ui/alert-dialog";
-import { toast } from "sonner";
 
 export default function StoresPage() {
 	const router = useRouter();
@@ -47,9 +46,6 @@ export default function StoresPage() {
 	const handleDelete = async (businessId: string) => {
 		await deleteBusiness(businessId);
 		refreshBusinesses();
-		toast("Comercio eliminado exitosamente", {
-			description: "El comercio ha sido eliminado de la base de datos.",
-		});
 	};
 
 	return (
@@ -64,9 +60,6 @@ export default function StoresPage() {
 							</Button>
 						}
 						onBusinessCreated={async () => {
-							toast("Comercio creado exitosamente", {
-								description: "El comercio ha sido creado en la base de datos.",
-							});
 							if (user?.id) {
 								refreshBusinesses();
 							}

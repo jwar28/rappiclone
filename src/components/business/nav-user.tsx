@@ -9,8 +9,8 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from "../../ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
+} from "@/src/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar";
 import { useAuthStore } from "@/src/stores/auth-store";
 
 export function NavUser({

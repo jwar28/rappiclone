@@ -1,6 +1,6 @@
-import { Button } from "../../ui/button";
-import { Tabs } from "../../ui/tabs";
-import { useRouter, usePathname } from "next/navigation";
+import { Button } from "@/src/components/ui/button";
+import { Tabs } from "@/src/components/ui/tabs";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { NavUser } from "./nav-user";
 import { useAuthStore } from "@/src/stores/auth-store";
@@ -9,12 +9,12 @@ import {
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from "../../ui/dropdown-menu";
+} from "@/src/components/ui/dropdown-menu";
 import { PlusCircleIcon } from "lucide-react";
-import { AddBusinessSheet } from "@/src/components/business/AddBusinessSheet";
+import { AddBusinessSheet } from "@/src/components/business/add-business-sheet";
 import { getBusinessesByOwnerId } from "@/src/api/business";
 import { useBusinessStore } from "@/src/stores/business-store";
-import { AddProductSheet } from "@/src/components/products/AddProductSheet";
+import { AddProductSheet } from "@/src/components/products/add-product-sheet";
 import { getProductsByBusinessId } from "@/src/api/products";
 import { useProductStore } from "@/src/stores/product-store";
 
