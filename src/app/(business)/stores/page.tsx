@@ -9,6 +9,7 @@ import { Pencil, Trash2, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { AddBusinessSheet } from "@/src/components/business/add-business-sheet";
+import { EditBusinessSheet } from "@/src/components/business/edit-business-sheet";
 import { getBusinessesByOwnerId, deleteBusiness } from "@/src/api/business";
 import { useAuthStore } from "@/src/stores/auth-store";
 import {
@@ -22,11 +23,14 @@ import {
 	AlertDialogTitle,
 	AlertDialogTrigger,
 } from "@/src/components/ui/alert-dialog";
+import { useState } from "react";
+import type { Business } from "@/src/types/database.types";
 
 export default function StoresPage() {
 	const router = useRouter();
 	const { businesses, loading, error, setBusinesses } = useBusinessStore();
 	const { user } = useAuthStore();
+	const [editingBusiness, setEditingBusiness] = useState<Business | null>(null);
 
 	const categoriesDict = {
 		restaurant: "Restaurante",
@@ -39,8 +43,8 @@ export default function StoresPage() {
 		setBusinesses(stores);
 	};
 
-	const handleEdit = (id: string) => {
-		router.push(`/stores/${id}/edit`);
+	const handleEdit = (business: Business) => {
+		setEditingBusiness(business);
 	};
 
 	const handleDelete = async (businessId: string) => {
@@ -74,74 +78,80 @@ export default function StoresPage() {
 					<p className="text-gray-500">No tienes comercios registrados aún.</p>
 				)}
 
-				<div className="grid gap-4">
-					{businesses?.map((store) => (
-						<Card
-							key={store.id}
-							className="shadow-lg hover:shadow-xl transition-shadow border-0 rounded-xl p-0 overflow-hidden"
-						>
-							<CardContent className="flex flex-row items-center justify-between p-6">
-								<Link
-									href={`/stores/${store.id}`}
-									className="flex items-center gap-4 flex-1 focus:outline-none"
-									tabIndex={-1}
-								>
-									<img
-										src={store.logo_url || "/placeholder-store.png"}
-										alt={store.name}
-										className="w-16 h-16 object-cover rounded-full shadow bg-gray-100"
-									/>
-									<div>
-										<h2 className="text-lg font-bold mb-1">{store.name}</h2>
-										<p className="text-sm text-gray-500">
-											{categoriesDict[store.category as keyof typeof categoriesDict]}
-										</p>
-									</div>
-								</Link>
-								<div className="flex gap-2 z-10">
-									<Button
-										variant="outline"
-										size="icon"
-										onClick={(e) => {
-											e.stopPropagation();
-											e.preventDefault();
-											handleEdit(store.id);
-										}}
-										title="Editar"
-									>
-										<Pencil className="w-4 h-4" />
-									</Button>
-									<AlertDialog>
-										<AlertDialogTrigger asChild>
-											<Button variant="destructive" size="icon" title="Eliminar">
-												<Trash2 className="w-4 h-4" />
+				{!loading && businesses && businesses.length > 0 && (
+					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+						{businesses.map((business) => (
+							<Card key={business.id}>
+								<CardContent className="p-4">
+									<div className="flex justify-between items-start">
+										<Link
+											href={`/stores/${business.id}`}
+											className="flex items-center gap-3 flex-1 focus:outline-none"
+											tabIndex={-1}
+										>
+											<img
+												src={business.logo_url || "/placeholder-store.png"}
+												alt={business.name}
+												className="w-12 h-12 object-cover rounded-full shadow bg-gray-100"
+											/>
+											<div>
+												<h3 className="font-semibold text-lg">{business.name}</h3>
+												<p className="text-sm text-gray-500">
+													{categoriesDict[business.category as keyof typeof categoriesDict]}
+												</p>
+											</div>
+										</Link>
+										<div className="flex gap-2">
+											<Button
+												variant="ghost"
+												size="icon"
+												onClick={(e) => {
+													e.stopPropagation();
+													e.preventDefault();
+													handleEdit(business);
+												}}
+											>
+												<Pencil className="w-4 h-4" />
 											</Button>
-										</AlertDialogTrigger>
-										<AlertDialogContent>
-											<AlertDialogHeader>
-												<AlertDialogTitle>¿Eliminar comercio?</AlertDialogTitle>
-												<AlertDialogDescription>
-													Esta acción no se puede deshacer. Se eliminará permanentemente el comercio
-													y todos sus datos asociados.
-												</AlertDialogDescription>
-											</AlertDialogHeader>
-											<AlertDialogFooter>
-												<AlertDialogCancel>Cancelar</AlertDialogCancel>
-												<AlertDialogAction
-													onClick={() => {
-														handleDelete(store.id);
-													}}
-												>
-													Eliminar
-												</AlertDialogAction>
-											</AlertDialogFooter>
-										</AlertDialogContent>
-									</AlertDialog>
-								</div>
-							</CardContent>
-						</Card>
-					))}
-				</div>
+											<AlertDialog>
+												<AlertDialogTrigger asChild>
+													<Button variant="ghost" size="icon">
+														<Trash2 className="w-4 h-4" />
+													</Button>
+												</AlertDialogTrigger>
+												<AlertDialogContent>
+													<AlertDialogHeader>
+														<AlertDialogTitle>
+															¿Estás seguro de eliminar este comercio?
+														</AlertDialogTitle>
+														<AlertDialogDescription>
+															Esta acción no se puede deshacer.
+														</AlertDialogDescription>
+													</AlertDialogHeader>
+													<AlertDialogFooter>
+														<AlertDialogCancel>Cancelar</AlertDialogCancel>
+														<AlertDialogAction onClick={() => handleDelete(business.id)}>
+															Eliminar
+														</AlertDialogAction>
+													</AlertDialogFooter>
+												</AlertDialogContent>
+											</AlertDialog>
+										</div>
+									</div>
+								</CardContent>
+							</Card>
+						))}
+					</div>
+				)}
+
+				{editingBusiness && (
+					<EditBusinessSheet
+						business={editingBusiness}
+						open={!!editingBusiness}
+						onOpenChange={(open) => !open && setEditingBusiness(null)}
+						onBusinessUpdated={refreshBusinesses}
+					/>
+				)}
 			</div>
 		</FadeContent>
 	);

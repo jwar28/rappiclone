@@ -1,5 +1,4 @@
-import { useBusinessStore } from "../stores/business-store";
-import type { Business, InsertBusiness } from "../types/database.types";
+import type { Business, InsertBusiness, UpdateBusiness } from "../types/database.types";
 import { supabase } from "../utils/supabase/client";
 
 export const getBusinesses = async (): Promise<Business[]> => {
@@ -45,4 +44,17 @@ export const addBusiness = async (business: InsertBusiness): Promise<Business> =
 export const deleteBusiness = async (businessId: string): Promise<void> => {
 	const { error } = await supabase.from("businesses").delete().eq("id", businessId);
 	if (error) throw new Error(error.message);
+};
+
+export const updateBusiness = async (id: string, business: UpdateBusiness): Promise<Business> => {
+	const { data, error } = await supabase
+		.from("businesses")
+		.update(business)
+		.eq("id", id)
+		.select()
+		.single();
+
+	if (error) throw new Error(error.message);
+
+	return data as Business;
 };
