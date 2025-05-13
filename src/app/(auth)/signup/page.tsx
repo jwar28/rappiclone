@@ -20,7 +20,8 @@ import {
 	SelectContent,
 	SelectItem,
 } from "@/src/components/ui/select";
-import { type UserRole, signUp } from "@/src/utils/supabase/client";
+import { signUp } from "@/src/utils/supabase/client";
+import type { UserRole } from "@/src/types/database.types";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -58,9 +59,7 @@ export default function SignUp() {
 				<div className="flex min-h-screen flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
 					<Card className="w-full max-w-md">
 						<CardHeader className="space-y-1">
-							<CardTitle className="text-2xl font-bold text-center">
-								Crear una cuenta
-							</CardTitle>
+							<CardTitle className="text-2xl font-bold text-center">Crear una cuenta</CardTitle>
 							<CardDescription className="text-center">
 								Ingresa tus datos para registrarte
 							</CardDescription>
@@ -77,8 +76,8 @@ export default function SignUp() {
 								{success && (
 									<Alert>
 										<AlertDescription>
-											Registro exitoso. Por favor, verifica tu correo
-											electrónico para confirmar tu cuenta.
+											Registro exitoso. Por favor, verifica tu correo electrónico para confirmar tu
+											cuenta.
 										</AlertDescription>
 									</Alert>
 								)}
@@ -108,18 +107,13 @@ export default function SignUp() {
 
 								<div className="space-y-2">
 									<Label htmlFor="role">Tipo de cuenta</Label>
-									<Select
-										value={role}
-										onValueChange={(value) => setRole(value as UserRole)}
-									>
+									<Select value={role} onValueChange={(value) => setRole(value as UserRole)}>
 										<SelectTrigger>
 											<SelectValue placeholder="Selecciona un tipo de cuenta" />
 										</SelectTrigger>
 										<SelectContent>
 											<SelectItem value="customer">Cliente</SelectItem>
-											<SelectItem value="business_owner">
-												Dueño de negocio
-											</SelectItem>
+											<SelectItem value="business_owner">Dueño de negocio</SelectItem>
 										</SelectContent>
 									</Select>
 								</div>
@@ -132,10 +126,7 @@ export default function SignUp() {
 
 								<div className="text-center text-sm">
 									¿Ya tienes una cuenta?{" "}
-									<Link
-										href="/signin"
-										className="font-medium text-primary hover:underline"
-									>
+									<Link href="/signin" className="font-medium text-primary hover:underline">
 										Inicia sesión
 									</Link>
 								</div>
