@@ -346,7 +346,7 @@ export const Constants = {
 	},
 } as const;
 
-export type UserRole = "admin" | "owner" | "customer";
+export type UserRole = "admin" | "business_owner" | "customer";
 // businesses
 export type Business = Database["public"]["Tables"]["businesses"]["Row"];
 export type InsertBusiness = Database["public"]["Tables"]["businesses"]["Insert"];

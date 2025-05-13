@@ -22,7 +22,7 @@ export function AuthRedirectGuard() {
 						case "admin":
 							router.push("/admin-dashboard");
 							break;
-						case "owner":
+						case "business_owner":
 							router.push("/business-dashboard");
 							break;
 						default:

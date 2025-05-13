@@ -29,7 +29,7 @@ export function RouteGuard({ children, allowedRoles, redirectTo = "/signin" }: R
 				case "admin":
 					router.replace("/admin-dashboard");
 					break;
-				case "owner":
+				case "business_owner":
 					router.replace("/business-dashboard");
 					break;
 				default:
