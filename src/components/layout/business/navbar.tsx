@@ -14,13 +14,17 @@ import { PlusCircleIcon } from "lucide-react";
 import { AddBusinessSheet } from "@/src/components/business/AddBusinessSheet";
 import { getBusinessesByOwnerId } from "@/src/api/business";
 import { useBusinessStore } from "@/src/stores/business-store";
+import { AddProductSheet } from "@/src/components/products/AddProductSheet";
+import { getProductsByBusinessId } from "@/src/api/products";
+import { useProductStore } from "@/src/stores/product-store";
 
 export const Navbar = () => {
 	const router = useRouter();
-	const pathname = usePathname();
 	const { user } = useAuthStore();
 	const [openSheet, setOpenSheet] = useState(false);
-	const { setBusinesses } = useBusinessStore();
+	const [openProductSheet, setOpenProductSheet] = useState(false);
+	const { businesses, setBusinesses } = useBusinessStore();
+	const { setProducts } = useProductStore();
 
 	const tabs = [
 		{
@@ -36,9 +40,6 @@ export const Navbar = () => {
 			value: "/sales",
 		},
 	];
-
-	// Si estamos en una ruta que no es una tab, no mostramos ninguna como activa
-	const activeTab = tabs.find((tab) => tab.value === pathname) || null;
 
 	return (
 		<div className="w-full bg-white shadow-sm border-b flex items-center justify-between px-4 py-2 relative">
@@ -57,9 +58,7 @@ export const Navbar = () => {
 						</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent side="bottom" align="center">
-						<DropdownMenuItem onClick={() => console.log("Crear producto")}>
-							Producto
-						</DropdownMenuItem>
+						<DropdownMenuItem onClick={() => setOpenProductSheet(true)}>Producto</DropdownMenuItem>
 						<DropdownMenuItem onClick={() => setOpenSheet(true)}>Negocio</DropdownMenuItem>
 						<DropdownMenuItem onClick={() => console.log("Crear orden")}>Orden</DropdownMenuItem>
 					</DropdownMenuContent>
@@ -72,6 +71,23 @@ export const Navbar = () => {
 						if (user?.id) {
 							const negocios = await getBusinessesByOwnerId(user.id);
 							setBusinesses(negocios);
+						}
+					}}
+				/>
+
+				<AddProductSheet
+					trigger={null}
+					open={openProductSheet}
+					onOpenChange={setOpenProductSheet}
+					businesses={businesses || []}
+					onProductCreated={async () => {
+						if (businesses) {
+							const allProducts = [];
+							for (const business of businesses) {
+								const products = await getProductsByBusinessId(business.id);
+								allProducts.push(...products);
+							}
+							setProducts(allProducts);
 						}
 					}}
 				/>

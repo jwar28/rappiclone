@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useBusinessStore } from "@/src/stores/business-store";
 import { useProductStore } from "@/src/stores/product-store";
@@ -12,19 +11,16 @@ import type { ColumnDef } from "@tanstack/react-table";
 import FadeContent from "@/src/components/ui/fade-content";
 import { Card, CardContent } from "@/src/components/ui/card";
 import { TrendingUp, Package, DollarSign, ShoppingCart } from "lucide-react";
-
-const ITEMS_PER_PAGE = 5;
+import { getProductsByBusinessId } from "@/src/api/products";
+import { AddProductSheet } from "@/src/components/products/AddProductSheet";
 
 export default function StorePage() {
 	const pathname = usePathname();
 	const storeId = pathname.split("/").pop();
 	const { businesses } = useBusinessStore();
-	const { products } = useProductStore();
+	const { products, setProducts } = useProductStore();
 	const { orders } = useOrderStore();
 	const { profiles } = useProfilesStore();
-
-	const [currentProductPage, setCurrentProductPage] = useState(1);
-	const [currentOrderPage, setCurrentOrderPage] = useState(1);
 
 	const handleEdit = (productId: string) => {
 		console.log("Edit product:", productId);
@@ -37,7 +33,6 @@ export default function StorePage() {
 	const filteredProducts = products.filter((product) => product.business_id === storeId);
 	const filteredOrders = orders.filter((order) => order.business_id === storeId);
 
-	// Columnas para productos
 	const productColumns: ColumnDef<(typeof products)[0]>[] = [
 		{
 			accessorKey: "name",
@@ -66,7 +61,6 @@ export default function StorePage() {
 		},
 	];
 
-	// Columnas para ventas
 	const orderColumns: ColumnDef<(typeof orders)[0]>[] = [
 		{
 			accessorKey: "id",
@@ -97,6 +91,12 @@ export default function StorePage() {
 	const totalOrders = filteredOrders.length;
 	const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
 
+	const refreshProducts = async () => {
+		if (!storeId) return;
+		const products = await getProductsByBusinessId(storeId);
+		setProducts(products);
+	};
+
 	return (
 		<FadeContent easing="ease-in-out" duration={500}>
 			<div className="p-4 overflow-hidden flex flex-col">
@@ -106,7 +106,11 @@ export default function StorePage() {
 					</h1>
 
 					<div className="flex justify-end mb-4">
-						<Button>Agregar Producto</Button>
+						<AddProductSheet
+							trigger={<Button>Agregar Producto</Button>}
+							selectedBusinessId={storeId}
+							onProductCreated={refreshProducts}
+						/>
 					</div>
 				</div>
 
