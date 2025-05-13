@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOutIcon, MoreVerticalIcon, UserCircleIcon } from "lucide-react";
+import { EyeIcon, LogOutIcon, MoreVerticalIcon, UserCircleIcon } from "lucide-react";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -8,10 +8,15 @@ import {
 	DropdownMenuItem,
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
+	DropdownMenuSub,
+	DropdownMenuSubContent,
+	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar";
 import { useAuthStore } from "@/src/stores/auth-store";
+import { getInitials } from "@/src/utils/utils";
+import { useRouter } from "next/navigation";
 
 export function NavUser({
 	user,
@@ -23,6 +28,7 @@ export function NavUser({
 	};
 }) {
 	const { logout } = useAuthStore();
+	const router = useRouter();
 
 	return (
 		<DropdownMenu>
@@ -30,7 +36,7 @@ export function NavUser({
 				<button type="button" className="flex items-center gap-2 rounded-lg p-1 hover:bg-accent">
 					<Avatar className="h-8 w-8 rounded-lg grayscale">
 						<AvatarImage src={user.avatar ?? undefined} alt={user.name ?? undefined} />
-						<AvatarFallback className="rounded-lg">CN</AvatarFallback>
+						<AvatarFallback className="rounded-lg">{getInitials(user.name ?? "")}</AvatarFallback>
 					</Avatar>
 					<div className="hidden md:grid flex-1 text-left text-sm leading-tight">
 						<span className="truncate font-medium">{user.name}</span>
@@ -39,6 +45,7 @@ export function NavUser({
 					<MoreVerticalIcon className="ml-auto size-4" />
 				</button>
 			</DropdownMenuTrigger>
+
 			<DropdownMenuContent
 				className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
 				align="end"
@@ -48,7 +55,7 @@ export function NavUser({
 					<div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
 						<Avatar className="h-8 w-8 rounded-lg">
 							<AvatarImage src={user.avatar ?? undefined} alt={user.name ?? undefined} />
-							<AvatarFallback className="rounded-lg">CN</AvatarFallback>
+							<AvatarFallback className="rounded-lg">{getInitials(user.name ?? "")}</AvatarFallback>
 						</Avatar>
 						<div className="grid flex-1 text-left text-sm leading-tight">
 							<span className="truncate font-medium">{user.name}</span>
@@ -56,21 +63,29 @@ export function NavUser({
 						</div>
 					</div>
 				</DropdownMenuLabel>
+
 				<DropdownMenuSeparator />
+
 				<DropdownMenuGroup>
-					<DropdownMenuItem>
-						<UserCircleIcon />
-						Account
-					</DropdownMenuItem>
+					<DropdownMenuSub>
+						<DropdownMenuSubTrigger>
+							<EyeIcon />
+							Ver como
+						</DropdownMenuSubTrigger>
+						<DropdownMenuSubContent className="min-w-36">
+							<DropdownMenuItem onClick={() => router.push("/admin-dashboard")}>
+								Administrador
+							</DropdownMenuItem>
+							<DropdownMenuItem onClick={() => router.push("/home")}>Cliente</DropdownMenuItem>
+						</DropdownMenuSubContent>
+					</DropdownMenuSub>
 				</DropdownMenuGroup>
+
 				<DropdownMenuSeparator />
-				<DropdownMenuItem
-					onClick={() => {
-						logout();
-					}}
-				>
+
+				<DropdownMenuItem onClick={logout}>
 					<LogOutIcon />
-					Log out
+					Cerrar sesión
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>
