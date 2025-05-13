@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import type { UserRole } from "@/src/utils/supabase/client";
 import { useAuthStore } from "@/src/stores/auth-store";
+import type { UserRole } from "@/src/types/database.types";
 
 type RouteGuardProps = {
 	children: React.ReactNode;
@@ -11,11 +11,7 @@ type RouteGuardProps = {
 	redirectTo?: string;
 };
 
-export function RouteGuard({
-	children,
-	allowedRoles,
-	redirectTo = "/signin",
-}: RouteGuardProps) {
+export function RouteGuard({ children, allowedRoles, redirectTo = "/signin" }: RouteGuardProps) {
 	const { user, loading } = useAuthStore();
 	const router = useRouter();
 	const [authorized, setAuthorized] = useState(false);
@@ -28,7 +24,7 @@ export function RouteGuard({
 			return;
 		}
 
-		if (!allowedRoles.includes(user.role)) {
+		if (!allowedRoles.includes(user.role as UserRole)) {
 			switch (user.role) {
 				case "admin":
 					router.replace("/admin-dashboard");

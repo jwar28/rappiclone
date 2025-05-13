@@ -11,13 +11,8 @@ export const getProfile = async (): Promise<Profile[]> => {
 	return data as Profile[];
 };
 
-export const getProfileByUserId = async (
-	userId: string,
-): Promise<Profile[]> => {
-	const { data, error } = await supabase
-		.from("profiles")
-		.select("*")
-		.eq("user_id", userId);
+export const getProfileByUserId = async (userId: string): Promise<Profile[]> => {
+	const { data, error } = await supabase.from("profiles").select("*").eq("user_id", userId);
 
 	if (error) {
 		throw new Error(error.message);

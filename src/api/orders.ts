@@ -11,13 +11,8 @@ export const getOrders = async (): Promise<Order[]> => {
 	return data as Order[];
 };
 
-export const getOrdersByBusinessId = async (
-	businessId: string,
-): Promise<Order[]> => {
-	const { data, error } = await supabase
-		.from("orders")
-		.select("*")
-		.eq("business_id", businessId);
+export const getOrdersByBusinessId = async (businessId: string): Promise<Order[]> => {
+	const { data, error } = await supabase.from("orders").select("*").eq("business_id", businessId);
 
 	if (error) {
 		throw new Error(error.message);

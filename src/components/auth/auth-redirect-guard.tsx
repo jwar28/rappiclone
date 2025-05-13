@@ -17,11 +17,7 @@ export function AuthRedirectGuard() {
 			if (!profile) {
 				if (pathname !== "/signin") router.push("/signin");
 			} else {
-				if (
-					pathname === "/" ||
-					pathname === "/signin" ||
-					pathname === "/signup"
-				) {
+				if (pathname === "/" || pathname === "/signin" || pathname === "/signup") {
 					switch (profile.role) {
 						case "admin":
 							router.push("/admin-dashboard");

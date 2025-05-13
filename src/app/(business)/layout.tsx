@@ -8,7 +8,7 @@ import { Toaster } from "@/src/components/ui/sonner";
 
 export default function BusinessLayout({ children }: { children: React.ReactNode }) {
 	return (
-		<RouteGuard allowedRoles={["business_owner", "admin"]}>
+		<RouteGuard allowedRoles={["owner", "admin"]}>
 			<AuthRedirectGuard />
 			<FadeContent>
 				<Navbar />

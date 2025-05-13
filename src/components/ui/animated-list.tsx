@@ -80,20 +80,16 @@ const AnimatedList: React.FC<AnimatedListProps> = ({
 	initialSelectedIndex = -1,
 }) => {
 	const listRef = useRef<HTMLDivElement>(null);
-	const [selectedIndex, setSelectedIndex] =
-		useState<number>(initialSelectedIndex);
+	const [selectedIndex, setSelectedIndex] = useState<number>(initialSelectedIndex);
 	const [keyboardNav, setKeyboardNav] = useState<boolean>(false);
 	const [topGradientOpacity, setTopGradientOpacity] = useState<number>(0);
 	const [bottomGradientOpacity, setBottomGradientOpacity] = useState<number>(1);
 
 	const handleScroll = (e: UIEvent<HTMLDivElement>) => {
-		const { scrollTop, scrollHeight, clientHeight } =
-			e.target as HTMLDivElement;
+		const { scrollTop, scrollHeight, clientHeight } = e.target as HTMLDivElement;
 		setTopGradientOpacity(Math.min(scrollTop / 50, 1));
 		const bottomDistance = scrollHeight - (scrollTop + clientHeight);
-		setBottomGradientOpacity(
-			scrollHeight <= clientHeight ? 0 : Math.min(bottomDistance / 50, 1),
-		);
+		setBottomGradientOpacity(scrollHeight <= clientHeight ? 0 : Math.min(bottomDistance / 50, 1));
 	};
 
 	// Keyboard navigation: arrow keys, tab, and enter selection
@@ -137,10 +133,7 @@ const AnimatedList: React.FC<AnimatedListProps> = ({
 			const itemBottom = itemTop + selectedItem.offsetHeight;
 			if (itemTop < containerScrollTop + extraMargin) {
 				container.scrollTo({ top: itemTop - extraMargin, behavior: "smooth" });
-			} else if (
-				itemBottom >
-				containerScrollTop + containerHeight - extraMargin
-			) {
+			} else if (itemBottom > containerScrollTop + containerHeight - extraMargin) {
 				container.scrollTo({
 					top: itemBottom - containerHeight + extraMargin,
 					behavior: "smooth",

@@ -1,10 +1,4 @@
-export type Json =
-	| string
-	| number
-	| boolean
-	| null
-	| { [key: string]: Json | undefined }
-	| Json[];
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
 	public: {
@@ -264,10 +258,8 @@ export type Tables<
 		}
 		? R
 		: never
-	: DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
-				DefaultSchema["Views"])
-		? (DefaultSchema["Tables"] &
-				DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+	: DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+		? (DefaultSchema["Tables"] & DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
 				Row: infer R;
 			}
 			? R
@@ -321,9 +313,7 @@ export type TablesUpdate<
 		: never;
 
 export type Enums<
-	DefaultSchemaEnumNameOrOptions extends
-		| keyof DefaultSchema["Enums"]
-		| { schema: keyof Database },
+	DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"] | { schema: keyof Database },
 	EnumName extends DefaultSchemaEnumNameOrOptions extends {
 		schema: keyof Database;
 	}
@@ -359,17 +349,13 @@ export const Constants = {
 export type UserRole = "admin" | "owner" | "customer";
 // businesses
 export type Business = Database["public"]["Tables"]["businesses"]["Row"];
-export type InsertBusiness =
-	Database["public"]["Tables"]["businesses"]["Insert"];
-export type UpdateBusiness =
-	Database["public"]["Tables"]["businesses"]["Update"];
+export type InsertBusiness = Database["public"]["Tables"]["businesses"]["Insert"];
+export type UpdateBusiness = Database["public"]["Tables"]["businesses"]["Update"];
 
 // order_items
 export type OrderItem = Database["public"]["Tables"]["order_items"]["Row"];
-export type InsertOrderItem =
-	Database["public"]["Tables"]["order_items"]["Insert"];
-export type UpdateOrderItem =
-	Database["public"]["Tables"]["order_items"]["Update"];
+export type InsertOrderItem = Database["public"]["Tables"]["order_items"]["Insert"];
+export type UpdateOrderItem = Database["public"]["Tables"]["order_items"]["Update"];
 
 // orders
 export type Order = Database["public"]["Tables"]["orders"]["Row"];

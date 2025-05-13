@@ -21,11 +21,7 @@ export default async function getCurrentProfile(): Promise<Profile | null> {
 
 		if (!user) return null;
 
-		const { data: profile } = await client
-			.from("profiles")
-			.select("*")
-			.eq("id", user.id)
-			.single();
+		const { data: profile } = await client.from("profiles").select("*").eq("id", user.id).single();
 
 		return profile as Profile;
 	} catch (error) {
@@ -44,10 +40,7 @@ export async function updateProfile(
 
 		if (!user) return { success: false, error: "No user logged in" };
 
-		const { error } = await client
-			.from("profiles")
-			.update(profile)
-			.eq("id", user.id);
+		const { error } = await client.from("profiles").update(profile).eq("id", user.id);
 
 		if (error) throw error;
 
