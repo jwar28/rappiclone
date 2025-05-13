@@ -2,6 +2,7 @@ import { Geist } from "next/font/google";
 import "./globals.css";
 import { AuthRedirectGuard } from "../components/auth/auth-redirect-guard";
 import { AuthProvider } from "../utils/auth-provider";
+import { Toaster } from "../components/ui/sonner";
 
 const defaultUrl = process.env.VERCEL_URL
 	? `https://${process.env.VERCEL_URL}`
@@ -10,8 +11,7 @@ const defaultUrl = process.env.VERCEL_URL
 export const metadata = {
 	metadataBase: new URL(defaultUrl),
 	title: "Rappiclone",
-	description:
-		"Rappiclon es una plataforma de gestión de clientes y pedidos para tu negocio.",
+	description: "Rappiclon es una plataforma de gestión de clientes y pedidos para tu negocio.",
 };
 
 const geistSans = Geist({
@@ -29,6 +29,7 @@ export default function RootLayout({
 			<AuthRedirectGuard />
 			<body>
 				<AuthProvider>{children}</AuthProvider>
+				<Toaster />
 			</body>
 		</html>
 	);

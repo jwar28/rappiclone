@@ -9,8 +9,20 @@ import { Pencil, Trash2, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { AddBusinessSheet } from "@/src/components/business/AddBusinessSheet";
-import { getBusinessesByOwnerId } from "@/src/api/business";
+import { getBusinessesByOwnerId, deleteBusiness } from "@/src/api/business";
 import { useAuthStore } from "@/src/stores/auth-store";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+	AlertDialogTrigger,
+} from "@/src/components/ui/alert-dialog";
+import { toast } from "sonner";
 
 export default function StoresPage() {
 	const router = useRouter();
@@ -23,20 +35,21 @@ export default function StoresPage() {
 		supermarket: "Supermercado",
 	};
 
+	const refreshBusinesses = async () => {
+		const stores = await getBusinessesByOwnerId(user?.id || "");
+		setBusinesses(stores);
+	};
+
 	const handleEdit = (id: string) => {
 		router.push(`/stores/${id}/edit`);
 	};
 
-	const handleDelete = (id: string) => {
-		// Aquí deberías mostrar confirmación y luego eliminar
-		if (window.confirm("¿Seguro que deseas eliminar este comercio?")) {
-			// Lógica para eliminar el comercio
-			console.log("Eliminar comercio", id);
-		}
-	};
-
-	const handleCreate = () => {
-		router.push("/stores/create");
+	const handleDelete = async (businessId: string) => {
+		await deleteBusiness(businessId);
+		refreshBusinesses();
+		toast("Comercio eliminado exitosamente", {
+			description: "El comercio ha sido eliminado de la base de datos.",
+		});
 	};
 
 	return (
@@ -51,9 +64,11 @@ export default function StoresPage() {
 							</Button>
 						}
 						onBusinessCreated={async () => {
+							toast("Comercio creado exitosamente", {
+								description: "El comercio ha sido creado en la base de datos.",
+							});
 							if (user?.id) {
-								const negocios = await getBusinessesByOwnerId(user.id);
-								setBusinesses(negocios);
+								refreshBusinesses();
 							}
 						}}
 					/>
@@ -72,53 +87,65 @@ export default function StoresPage() {
 							key={store.id}
 							className="shadow-lg hover:shadow-xl transition-shadow border-0 rounded-xl p-0 overflow-hidden"
 						>
-							<Link
-								href={`/stores/${store.id}`}
-								className="block w-full h-full focus:outline-none"
-								tabIndex={-1}
-							>
-								<CardContent className="flex flex-row items-center justify-between p-6 cursor-pointer hover:bg-gray-50 transition-colors">
-									<div className="flex items-center gap-4">
-										<img
-											src={store.logo_url || "/placeholder-store.png"}
-											alt={store.name}
-											className="w-16 h-16 object-cover rounded-full shadow bg-gray-100"
-										/>
-										<div>
-											<h2 className="text-lg font-bold mb-1">{store.name}</h2>
-											<p className="text-sm text-gray-500">
-												{categoriesDict[store.category as keyof typeof categoriesDict]}
-											</p>
-										</div>
+							<CardContent className="flex flex-row items-center justify-between p-6">
+								<Link
+									href={`/stores/${store.id}`}
+									className="flex items-center gap-4 flex-1 focus:outline-none"
+									tabIndex={-1}
+								>
+									<img
+										src={store.logo_url || "/placeholder-store.png"}
+										alt={store.name}
+										className="w-16 h-16 object-cover rounded-full shadow bg-gray-100"
+									/>
+									<div>
+										<h2 className="text-lg font-bold mb-1">{store.name}</h2>
+										<p className="text-sm text-gray-500">
+											{categoriesDict[store.category as keyof typeof categoriesDict]}
+										</p>
 									</div>
-									<div className="flex gap-2 z-10">
-										<Button
-											variant="outline"
-											size="icon"
-											onClick={(e) => {
-												e.stopPropagation();
-												e.preventDefault();
-												handleEdit(store.id);
-											}}
-											title="Editar"
-										>
-											<Pencil className="w-4 h-4" />
-										</Button>
-										<Button
-											variant="destructive"
-											size="icon"
-											onClick={(e) => {
-												e.stopPropagation();
-												e.preventDefault();
-												handleDelete(store.id);
-											}}
-											title="Eliminar"
-										>
-											<Trash2 className="w-4 h-4" />
-										</Button>
-									</div>
-								</CardContent>
-							</Link>
+								</Link>
+								<div className="flex gap-2 z-10">
+									<Button
+										variant="outline"
+										size="icon"
+										onClick={(e) => {
+											e.stopPropagation();
+											e.preventDefault();
+											handleEdit(store.id);
+										}}
+										title="Editar"
+									>
+										<Pencil className="w-4 h-4" />
+									</Button>
+									<AlertDialog>
+										<AlertDialogTrigger asChild>
+											<Button variant="destructive" size="icon" title="Eliminar">
+												<Trash2 className="w-4 h-4" />
+											</Button>
+										</AlertDialogTrigger>
+										<AlertDialogContent>
+											<AlertDialogHeader>
+												<AlertDialogTitle>¿Eliminar comercio?</AlertDialogTitle>
+												<AlertDialogDescription>
+													Esta acción no se puede deshacer. Se eliminará permanentemente el comercio
+													y todos sus datos asociados.
+												</AlertDialogDescription>
+											</AlertDialogHeader>
+											<AlertDialogFooter>
+												<AlertDialogCancel>Cancelar</AlertDialogCancel>
+												<AlertDialogAction
+													onClick={() => {
+														handleDelete(store.id);
+													}}
+												>
+													Eliminar
+												</AlertDialogAction>
+											</AlertDialogFooter>
+										</AlertDialogContent>
+									</AlertDialog>
+								</div>
+							</CardContent>
 						</Card>
 					))}
 				</div>
