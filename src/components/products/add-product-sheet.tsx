@@ -10,6 +10,7 @@ import {
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import { Label } from "@/src/components/ui/label";
+import { Textarea } from "@/src/components/ui/textarea";
 import {
 	Select,
 	SelectContent,
@@ -46,6 +47,7 @@ export function AddProductSheet({
 	const open = controlledOpen !== undefined ? controlledOpen : internalOpen;
 	const setOpen = controlledOnOpenChange || setInternalOpen;
 	const [name, setName] = useState("");
+	const [description, setDescription] = useState("");
 	const [price, setPrice] = useState("");
 	const [imageUrl, setImageUrl] = useState("");
 	const [businessId, setBusinessId] = useState(selectedBusinessId || "");
@@ -61,6 +63,7 @@ export function AddProductSheet({
 		try {
 			await addProduct({
 				name,
+				description: description || null,
 				price: Number.parseFloat(price),
 				business_id: selectedBusinessId || businessId,
 				image_url: imageUrl || null,
@@ -68,6 +71,7 @@ export function AddProductSheet({
 			toast.success("Producto creado exitosamente");
 			setOpen(false);
 			setName("");
+			setDescription("");
 			setPrice("");
 			setImageUrl("");
 			if (onProductCreated) onProductCreated();
@@ -92,6 +96,15 @@ export function AddProductSheet({
 							value={name}
 							onChange={(e) => setName(e.target.value)}
 							required
+							disabled={loading}
+						/>
+					</div>
+					<div>
+						<Label>Descripción</Label>
+						<Textarea
+							value={description}
+							onChange={(e) => setDescription(e.target.value)}
+							placeholder="Describe el producto..."
 							disabled={loading}
 						/>
 					</div>

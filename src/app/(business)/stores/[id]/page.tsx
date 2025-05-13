@@ -39,8 +39,9 @@ export default function StorePage() {
 
 	const refreshProducts = async () => {
 		if (!storeId) return;
-		const products = await getProductsByBusinessId(storeId);
-		setProducts(products);
+		const updatedStoreProducts = await getProductsByBusinessId(storeId);
+		const otherStoreProducts = products.filter((p) => p.business_id !== storeId);
+		setProducts([...otherStoreProducts, ...updatedStoreProducts]);
 	};
 
 	const handleEdit = (productId: string) => {
