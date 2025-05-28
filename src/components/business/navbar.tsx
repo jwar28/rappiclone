@@ -1,5 +1,5 @@
 import { Button } from "@/src/components/ui/button";
-import { Tabs } from "@/src/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/src/components/ui/tabs";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { NavUser } from "./nav-user";
@@ -46,7 +46,15 @@ export const Navbar = () => {
 			<h1 className="text-2xl font-bold">Rappiclone</h1>
 
 			<div className="absolute left-1/2 -translate-x-1/2">
-				<Tabs tabs={tabs} onTabChange={(value) => router.push(value)} />
+				<Tabs onValueChange={(value: string) => router.push(value)}>
+					<TabsList>
+						{tabs.map((tab) => (
+							<TabsTrigger key={tab.value} value={tab.value}>
+								{tab.title}
+							</TabsTrigger>
+						))}
+					</TabsList>
+				</Tabs>
 			</div>
 
 			<div className="flex flex-row gap-4">
