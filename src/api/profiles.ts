@@ -4,9 +4,7 @@ import { supabase } from "../utils/supabase/client";
 export const getProfile = async (): Promise<Profile[]> => {
 	const { data, error } = await supabase.from("profiles").select("*");
 
-	if (error) {
-		throw new Error(error.message);
-	}
+	if (error) throw new Error(error.message);
 
 	return data as Profile[];
 };
@@ -14,9 +12,7 @@ export const getProfile = async (): Promise<Profile[]> => {
 export const getProfileByUserId = async (userId: string): Promise<Profile[]> => {
 	const { data, error } = await supabase.from("profiles").select("*").eq("user_id", userId);
 
-	if (error) {
-		throw new Error(error.message);
-	}
+	if (error) throw new Error(error.message);
 
 	return data as Profile[];
 };
@@ -40,4 +36,20 @@ export const fetchProfilesByIdsHelper = async (
 	);
 
 	return profileMap;
+};
+
+export const editProfile = async (profile: Profile) => {
+	const { data, error } = await supabase.from("profiles").update(profile).eq("id", profile.id);
+
+	if (error) throw new Error(error.message);
+
+	return data;
+};
+
+export const deleteProfile = async (profile: Profile) => {
+	const { data, error } = await supabase.from("profiles").delete().eq("id", profile.id);
+
+	if (error) throw new Error(error.message);
+
+	return data;
 };
