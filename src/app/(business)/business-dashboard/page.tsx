@@ -28,11 +28,26 @@ export default function BusinessDashboard() {
 	const { user } = useAuthStore();
 
 	useEffect(() => {
-		if (user?.id && (businesses?.length === 0 || orders.length === 0)) {
-			loadBusinessOwnerData(user.id);
+		let isMounted = true;
+
+		const loadData = async () => {
+			if (!user?.id) return;
+
+			try {
+				await loadBusinessOwnerData(user.id);
+			} catch (error) {
+				console.error("Error loading business data:", error);
+			}
+		};
+
+		if (user?.id) {
+			loadData();
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [user?.id, businesses?.length, orders.length]);
+
+		return () => {
+			isMounted = false;
+		};
+	}, [user?.id]);
 
 	const categoriesDict = {
 		restaurant: "Restaurante",
