@@ -2,14 +2,20 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Product } from "../types/database.types";
 
-interface CartItem extends Product {
+export interface CartItem {
+	id: string;
+	name: string;
+	price: number;
 	quantity: number;
+	image_url?: string;
+	businessId: string;
+	businessName: string;
 }
 
 interface CartStore {
 	items: CartItem[];
-	addItem: (product: Product) => void;
-	removeItem: (productId: string) => void;
+	addItem: (item: CartItem) => void;
+	removeItem: (itemId: string) => void;
 	clearCart: () => void;
 	getTotal: () => number;
 	getItemCount: () => number;
@@ -19,36 +25,30 @@ export const useCartStore = create<CartStore>()(
 	persist(
 		(set, get) => ({
 			items: [],
-			addItem: (product: Product) => {
+			addItem: (item) => {
 				set((state) => {
-					const existingItem = state.items.find((item) => item.id === product.id);
+					const existingItem = state.items.find((i) => i.id === item.id);
 					if (existingItem) {
 						return {
-							items: state.items.map((item) =>
-								item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item,
+							items: state.items.map((i) =>
+								i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i,
 							),
 						};
 					}
-					return { items: [...state.items, { ...product, quantity: 1 }] };
+					return { items: [...state.items, { ...item, quantity: 1 }] };
 				});
 			},
-			removeItem: (productId: string) => {
-				set((state) => {
-					const existingItem = state.items.find((item) => item.id === productId);
-					if (existingItem && existingItem.quantity > 1) {
-						return {
-							items: state.items.map((item) =>
-								item.id === productId ? { ...item, quantity: item.quantity - 1 } : item,
-							),
-						};
-					}
-					return { items: state.items.filter((item) => item.id !== productId) };
-				});
+			removeItem: (itemId) => {
+				set((state) => ({
+					items: state.items
+						.map((item) => (item.id === itemId ? { ...item, quantity: item.quantity - 1 } : item))
+						.filter((item) => item.quantity > 0),
+				}));
 			},
 			clearCart: () => set({ items: [] }),
 			getTotal: () => {
-				const state = get();
-				return state.items.reduce((total, item) => total + item.price * item.quantity, 0);
+				const { items } = get();
+				return items.reduce((total, item) => total + item.price * item.quantity, 0);
 			},
 			getItemCount: () => {
 				const state = get();

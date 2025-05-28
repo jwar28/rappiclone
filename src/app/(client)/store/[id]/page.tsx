@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { motion } from "framer-motion";
 import { Star, Clock, MapPin, ShoppingBag, Plus, Minus } from "lucide-react";
 import Image from "next/image";
@@ -9,7 +9,8 @@ import { getProductsByBusinessId } from "../../../../api/products";
 import type { Business, Product } from "../../../../types/database.types";
 import { useCartStore } from "../../../../stores/cart";
 
-export default function StorePage({ params }: { params: { id: string } }) {
+export default function StorePage({ params }: { params: Promise<{ id: string }> }) {
+	const { id } = use(params);
 	const [store, setStore] = useState<Business | null>(null);
 	const [products, setProducts] = useState<Product[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -19,7 +20,7 @@ export default function StorePage({ params }: { params: { id: string } }) {
 	useEffect(() => {
 		const fetchStoreData = async () => {
 			try {
-				const storeData = await getBusinessById(params.id);
+				const storeData = await getBusinessById(id);
 				setStore(storeData);
 
 				if (storeData) {
@@ -34,7 +35,7 @@ export default function StorePage({ params }: { params: { id: string } }) {
 		};
 
 		fetchStoreData();
-	}, [params.id]);
+	}, [id]);
 
 	if (loading) {
 		return (
