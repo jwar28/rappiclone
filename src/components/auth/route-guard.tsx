@@ -33,7 +33,7 @@ export function RouteGuard({ children, allowedRoles, redirectTo = "/signin" }: R
 					router.replace("/business-dashboard");
 					break;
 				default:
-					router.replace("/");
+					router.replace("/home");
 					break;
 			}
 			return;

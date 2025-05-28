@@ -27,7 +27,7 @@ export function NavUser({
 		avatar: string | null;
 	};
 }) {
-	const { logout } = useAuthStore();
+	const { logout, user: authUser } = useAuthStore();
 	const router = useRouter();
 
 	return (
@@ -66,22 +66,26 @@ export function NavUser({
 
 				<DropdownMenuSeparator />
 
-				<DropdownMenuGroup>
-					<DropdownMenuSub>
-						<DropdownMenuSubTrigger>
-							<EyeIcon />
-							Ver como
-						</DropdownMenuSubTrigger>
-						<DropdownMenuSubContent className="min-w-36">
-							<DropdownMenuItem onClick={() => router.push("/admin-dashboard")}>
-								Administrador
-							</DropdownMenuItem>
-							<DropdownMenuItem onClick={() => router.push("/home")}>Cliente</DropdownMenuItem>
-						</DropdownMenuSubContent>
-					</DropdownMenuSub>
-				</DropdownMenuGroup>
+				{authUser?.role !== "customer" && (
+					<>
+						<DropdownMenuGroup>
+							<DropdownMenuSub>
+								<DropdownMenuSubTrigger>
+									<EyeIcon />
+									Ver como
+								</DropdownMenuSubTrigger>
+								<DropdownMenuSubContent className="min-w-36">
+									<DropdownMenuItem onClick={() => router.push("/admin-dashboard")}>
+										Administrador
+									</DropdownMenuItem>
+									<DropdownMenuItem onClick={() => router.push("/home")}>Cliente</DropdownMenuItem>
+								</DropdownMenuSubContent>
+							</DropdownMenuSub>
+						</DropdownMenuGroup>
 
-				<DropdownMenuSeparator />
+						<DropdownMenuSeparator />
+					</>
+				)}
 
 				<DropdownMenuItem onClick={logout}>
 					<LogOutIcon />

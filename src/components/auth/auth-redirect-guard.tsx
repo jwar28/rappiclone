@@ -26,7 +26,7 @@ export function AuthRedirectGuard() {
 							router.push("/business-dashboard");
 							break;
 						default:
-							router.push("/");
+							router.push("/home");
 					}
 				}
 			}

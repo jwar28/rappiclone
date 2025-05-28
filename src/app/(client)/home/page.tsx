@@ -13,7 +13,8 @@ import { useOrdersStore } from "../../../stores/orders";
 import { useRouter } from "next/navigation";
 import { addOrder } from "../../../api/orders";
 import { supabase } from "../../../utils/supabase/client";
-import type { Order as DatabaseOrder } from "../../../types/database.types";
+import { useAuthStore } from "../../../stores/auth-store";
+import { NavUser } from "../../../components/business/nav-user";
 
 interface TransformedOrder {
 	id: string;
@@ -60,7 +61,6 @@ const categories = [
 	},
 ];
 
-// Función para generar un UUID v4
 const generateUUID = () => {
 	return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
 		const r = (Math.random() * 16) | 0;
@@ -75,6 +75,7 @@ export default function HomePage() {
 	const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [showCheckout, setShowCheckout] = useState(false);
+	const { user } = useAuthStore();
 
 	const { items: cartItems, addItem, removeItem, getTotal, clearCart } = useCartStore();
 	const { getActiveOrders } = useOrdersStore();
@@ -173,6 +174,15 @@ export default function HomePage() {
 							/>
 							<Search className="absolute right-3 top-2.5 text-gray-400" size={20} />
 						</div>
+						{user && (
+							<NavUser
+								user={{
+									name: user.full_name,
+									email: user.email,
+									avatar: null,
+								}}
+							/>
+						)}
 					</div>
 				</div>
 			</header>
