@@ -140,7 +140,15 @@ export default function StorePage({ params }: { params: Promise<{ id: string }> 
 									<span className="text-green-600 font-semibold">${product.price}</span>
 									<button
 										type="button"
-										onClick={() => addItem(product)}
+										onClick={() =>
+											addItem({
+												...product,
+												quantity: 1,
+												businessId: product.business_id,
+												businessName: product.name,
+												image_url: product.image_url ?? undefined,
+											})
+										}
 										className="bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700 transition-colors"
 									>
 										Agregar
