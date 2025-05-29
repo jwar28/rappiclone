@@ -16,6 +16,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { useOrdersStore } from "@/src/stores/orders";
 import { supabase } from "@/src/utils/supabase/client";
+import FadeContent from "@/src/components/ui/fade-content";
 
 // Fix for default marker icon
 const icon = new Icon({
@@ -92,7 +93,7 @@ export default function TrackingPage() {
 		return (
 			<div className="container mx-auto p-4 max-w-4xl">
 				<div className="flex items-center justify-center h-[50vh]">
-					<p className="text-lg">Loading order information...</p>
+					<p className="text-lg">Cargando información del pedido...</p>
 				</div>
 			</div>
 		);
@@ -102,131 +103,135 @@ export default function TrackingPage() {
 		return (
 			<div className="container mx-auto p-4 max-w-4xl">
 				<div className="flex items-center justify-center h-[50vh]">
-					<p className="text-lg text-red-600">{error || "Order not found"}</p>
+					<p className="text-lg text-red-600">{error || "Pedido no encontrado"}</p>
 				</div>
 			</div>
 		);
 	}
 
 	return (
-		<div className="container mx-auto p-4 max-w-4xl">
-			<div className="flex items-center justify-between mb-6">
-				<Link
-					href="/"
-					className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
-				>
-					<ArrowLeft className="w-5 h-5" />
-					<span>Volver al inicio</span>
-				</Link>
-				<div className="flex items-center gap-2">
-					<Plane className="w-8 h-8 text-blue-600" />
-					<h1 className="text-2xl font-bold">Seguimiento de tu pedido</h1>
-				</div>
-			</div>
-
-			<div className="grid gap-6">
-				{/* Map Section */}
-				<Card className="p-4 overflow-hidden">
-					<div className="h-[400px] w-full relative">
-						<MapContainer
-							center={[7.1257, -73.129]}
-							zoom={15}
-							style={{ height: "100%", width: "100%" }}
+		<>
+			<FadeContent>
+				<div className="container mx-auto p-4 max-w-4xl">
+					<div className="flex items-center justify-between mb-6">
+						<Link
+							href="/home"
+							className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
 						>
-							<TileLayer
-								url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-								attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-							/>
-							<Marker position={[7.1257, -73.129]} icon={icon}>
-								<Popup>Restaurante</Popup>
-							</Marker>
-							<Marker position={[7.128, -73.126]} icon={icon}>
-								<Popup>Tu ubicación</Popup>
-							</Marker>
-							<Polyline positions={route} color="#3B82F6" weight={3} opacity={0.7} />
-						</MapContainer>
-						<motion.div
-							className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-							animate={{
-								x: [0, 100, 200, 300],
-								y: [0, -50, 0, -50],
-							}}
-							transition={{
-								duration: 8,
-								repeat: Number.POSITIVE_INFINITY,
-								ease: "linear",
-							}}
-						>
+							<ArrowLeft className="w-5 h-5" />
+							<span>Volver al inicio</span>
+						</Link>
+						<div className="flex items-center gap-2">
 							<Plane className="w-8 h-8 text-blue-600" />
-						</motion.div>
+							<h1 className="text-2xl font-bold">Seguimiento de tu pedido</h1>
+						</div>
 					</div>
-				</Card>
 
-				{/* Delivery Info */}
-				<Card className="p-6">
-					<div className="space-y-6">
-						<div className="flex justify-between items-center">
-							<div className="flex items-center gap-2">
-								<Plane className="w-6 h-6 text-blue-600" />
-								<h2 className="text-xl font-semibold">Estado del pedido</h2>
+					<div className="grid gap-6">
+						{/* Map Section */}
+						<Card className="p-4 overflow-hidden">
+							<div className="h-[400px] w-full relative">
+								<MapContainer
+									center={[7.1257, -73.129]}
+									zoom={15}
+									style={{ height: "100%", width: "100%" }}
+								>
+									<TileLayer
+										url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+										attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+									/>
+									<Marker position={[7.1257, -73.129]} icon={icon}>
+										<Popup>Restaurante</Popup>
+									</Marker>
+									<Marker position={[7.128, -73.126]} icon={icon}>
+										<Popup>Tu ubicación</Popup>
+									</Marker>
+									<Polyline positions={route} color="#3B82F6" weight={3} opacity={0.7} />
+								</MapContainer>
+								<motion.div
+									className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+									animate={{
+										x: [0, 100, 200, 300],
+										y: [0, -50, 0, -50],
+									}}
+									transition={{
+										duration: 8,
+										repeat: Number.POSITIVE_INFINITY,
+										ease: "linear",
+									}}
+								>
+									<Plane className="w-8 h-8 text-blue-600" />
+								</motion.div>
 							</div>
-							<span className="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm font-medium">
-								{order.status === "pending"
-									? "Pendiente"
-									: order.status === "preparing"
-										? "Preparando"
-										: order.status === "delivering"
-											? "En entrega"
-											: "Entregado"}
-							</span>
-						</div>
+						</Card>
 
-						<div className="space-y-4">
-							<div className="flex items-center gap-4">
-								<Clock className="w-5 h-5 text-gray-500" />
-								<div className="flex-1">
-									<div className="flex justify-between text-sm mb-1">
-										<span className="text-gray-600">Tiempo estimado de llegada</span>
-										<span className="font-medium">{timeLeft} minutos</span>
+						{/* Delivery Info */}
+						<Card className="p-6">
+							<div className="space-y-6">
+								<div className="flex justify-between items-center">
+									<div className="flex items-center gap-2">
+										<Plane className="w-6 h-6 text-blue-600" />
+										<h2 className="text-xl font-semibold">Estado del pedido</h2>
 									</div>
-									<Progress value={progress} className="h-2" />
-								</div>
-							</div>
-
-							<div className="flex items-center gap-4">
-								<MapPin className="w-5 h-5 text-gray-500" />
-								<div>
-									<p className="text-sm text-gray-600">Dirección de entrega</p>
-									<p className="font-medium">{order.shipping_address}</p>
-								</div>
-							</div>
-						</div>
-
-						<div className="bg-gray-50 p-4 rounded-lg space-y-4">
-							<div className="flex items-center gap-2">
-								<Package className="w-5 h-5 text-gray-500" />
-								<h3 className="font-medium">Detalles del pedido</h3>
-							</div>
-							<div className="space-y-3">
-								<div className="flex justify-between text-sm">
-									<span className="text-gray-600">Número de pedido</span>
-									<span className="font-medium">#{order.id}</span>
-								</div>
-								<div className="flex justify-between text-sm">
-									<span className="text-gray-600">Fecha de pedido</span>
-									<span className="font-medium">
-										{new Date(order.created_at).toLocaleDateString()}
+									<span className="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm font-medium">
+										{order.status === "pending"
+											? "Pendiente"
+											: order.status === "preparing"
+												? "Preparando"
+												: order.status === "delivering"
+													? "En entrega"
+													: "Entregado"}
 									</span>
 								</div>
-								<div className="flex justify-between text-sm">
-									<span className="text-gray-600">Total</span>
-									<span className="font-medium">${order.total_amount.toFixed(2)}</span>
+
+								<div className="space-y-4">
+									<div className="flex items-center gap-4">
+										<Clock className="w-5 h-5 text-gray-500" />
+										<div className="flex-1">
+											<div className="flex justify-between text-sm mb-1">
+												<span className="text-gray-600">Tiempo estimado de llegada</span>
+												<span className="font-medium">{timeLeft} minutos</span>
+											</div>
+											<Progress value={progress} className="h-2" />
+										</div>
+									</div>
+
+									<div className="flex items-center gap-4">
+										<MapPin className="w-5 h-5 text-gray-500" />
+										<div>
+											<p className="text-sm text-gray-600">Dirección de entrega</p>
+											<p className="font-medium">{order.shipping_address}</p>
+										</div>
+									</div>
+								</div>
+
+								<div className="bg-gray-50 p-4 rounded-lg space-y-4">
+									<div className="flex items-center gap-2">
+										<Package className="w-5 h-5 text-gray-500" />
+										<h3 className="font-medium">Detalles del pedido</h3>
+									</div>
+									<div className="space-y-3">
+										<div className="flex justify-between text-sm">
+											<span className="text-gray-600">Número de pedido</span>
+											<span className="font-medium">#{order.id}</span>
+										</div>
+										<div className="flex justify-between text-sm">
+											<span className="text-gray-600">Fecha de pedido</span>
+											<span className="font-medium">
+												{new Date(order.created_at).toLocaleDateString()}
+											</span>
+										</div>
+										<div className="flex justify-between text-sm">
+											<span className="text-gray-600">Total</span>
+											<span className="font-medium">${order.total_amount.toFixed(2)}</span>
+										</div>
+									</div>
 								</div>
 							</div>
-						</div>
+						</Card>
 					</div>
-				</Card>
-			</div>
-		</div>
+				</div>
+			</FadeContent>
+		</>
 	);
 }

@@ -212,23 +212,25 @@ export default function HomePage() {
 										>
 											<motion.div
 												whileHover={{ y: -4 }}
-												className="bg-white rounded-2xl shadow-md p-6 border border-gray-100 cursor-pointer relative group flex flex-col min-h-[180px]"
+												className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 cursor-pointer relative group flex flex-col min-h-[200px] transition-all duration-200"
 											>
-												<div className="absolute inset-0 bg-green-50 opacity-0 group-hover:opacity-5 rounded-xl transition-opacity" />
-												<div className="flex items-start justify-between mb-3">
-													<div>
-														<h3 className="font-medium">{order.businessName}</h3>
-														<p className="text-sm text-gray-600">Pedido #{order.id.slice(0, 8)}</p>
-													</div>
+												{/* Estado del pedido */}
+												<div className="absolute right-6 top-6">
 													<span
-														className={`px-2 py-1 rounded-full text-xs font-medium ${
+														className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold shadow-sm
+														${
 															order.status === "pending"
-																? "bg-yellow-100 text-yellow-700"
+																? "bg-yellow-50 text-yellow-700 border border-yellow-200"
 																: order.status === "preparing"
-																	? "bg-blue-100 text-blue-700"
-																	: "bg-green-100 text-green-700"
+																	? "bg-blue-50 text-blue-700 border border-blue-200"
+																	: "bg-green-50 text-green-700 border border-green-200"
 														}`}
 													>
+														{order.status === "pending" && <Clock size={14} className="inline" />}
+														{order.status === "preparing" && <Star size={14} className="inline" />}
+														{order.status === "delivering" && (
+															<ArrowRight size={14} className="inline" />
+														)}
 														{order.status === "pending"
 															? "Pendiente"
 															: order.status === "preparing"
@@ -236,44 +238,51 @@ export default function HomePage() {
 																: "En camino"}
 													</span>
 												</div>
-												<div className="space-y-2 mb-3">
+
+												{/* Nombre del negocio y número de pedido */}
+												<div className="mb-4">
+													<h3 className="font-bold text-lg text-gray-900">{order.businessName}</h3>
+													<p className="text-xs text-gray-400">Pedido #{order.id.slice(0, 8)}</p>
+												</div>
+
+												{/* Productos */}
+												<div className="bg-gray-50 rounded-xl p-3 mb-4 divide-y">
 													{order.items.map((item) => (
-														<div key={item.id} className="flex items-center gap-2">
-															<div className="w-8 h-8 relative flex-shrink-0">
-																<Image
-																	src={item.image_url || "/images/placeholder-product.jpg"}
-																	alt={item.name}
-																	fill
-																	className="object-contain rounded"
-																	unoptimized={!item.image_url}
-																/>
-															</div>
-															<div className="flex-1">
-																<p className="text-sm">{item.name}</p>
-																<p className="text-xs text-gray-600">
+														<div
+															key={item.id}
+															className="flex items-center gap-3 py-2 first:pt-0 last:pb-0"
+														>
+															<Image
+																src={item.image_url || "/images/placeholder-product.jpg"}
+																alt={item.name}
+																width={10}
+																height={10}
+																className="object-contain rounded"
+															/>
+															<div className="flex-1 ml-12">
+																<p className="text-sm font-medium">{item.name}</p>
+																<p className="text-xs text-gray-500">
 																	{item.quantity}x ${item.price}
 																</p>
 															</div>
 														</div>
 													))}
 												</div>
+
+												{/* Entrega y total */}
 												<div className="flex items-center justify-between pt-3 border-t">
 													<div className="flex items-center gap-2 text-sm text-gray-600">
 														<Clock size={16} />
-														<span>
+														<span className="bg-gray-100 px-2 py-1 rounded-lg">
+															Entrega estimada:{" "}
 															{order.estimatedDeliveryTime
-																? `Entrega estimada: ${new Date(
-																		order.estimatedDeliveryTime,
-																	).toLocaleTimeString()}`
-																: "Tiempo estimado: 30-45 min"}
+																? new Date(order.estimatedDeliveryTime).toLocaleTimeString()
+																: "30-45 min"}
 														</span>
 													</div>
-													<span className="font-medium text-green-600">
+													<span className="font-bold text-green-600 text-lg">
 														${order.total.toFixed(2)}
 													</span>
-												</div>
-												<div className="absolute right-4 top-4 text-green-600 opacity-0 group-hover:opacity-100 transition-opacity">
-													<ArrowRight size={20} />
 												</div>
 											</motion.div>
 										</Link>
